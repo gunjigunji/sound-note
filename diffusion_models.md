@@ -18,6 +18,8 @@
 
 ## 論文
 
+- [Deep Unsupervised Learning using Nonequilibrium Thermodynamics](https://arxiv.org/abs/1503.03585): 拡散モデルの基礎となる理論的な枠組み
+- [Denoising Diffusion Probabilistic Models]( https://arxiv.org/abs/2006.11239v2): DDPM
 - [DiffWave: A Versatile Diffusion Model for Audio Synthesis](https://arxiv.org/abs/2009.09761)
 - [AudioGen: Textually Guided Audio Generation](https://arxiv.org/abs/2209.15352)
 - [Noise2Music: Text-conditioned Music Generation with Diffusion Models](https://arxiv.org/abs/2302.03917)
