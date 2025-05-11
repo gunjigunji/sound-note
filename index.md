@@ -1,8 +1,7 @@
-# Sound-Note
+## 読みたい論文や記事など
+### [拡散モデル系](https://gunjigunji.github.io/sound-note/diffusion_models)
 
-## 拡散モデル系
-### [読みたい論文など](https://gunjigunji.github.io/sound-note/diffusion_models)
-### [CLAP](/CLAP/CLAP.md)
+### [信号処理系](https://gunjigunji.github.io/sound-note/signal_processing)
 
-## 信号処理系
-### [読みたい論文など](https://gunjigunji.github.io/sound-note/signal_processing)
+## 個人的メモ
+### [勉強メモ](memo/https://gunjigunji.github.io/sound-note/study_notes.md)
