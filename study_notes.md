@@ -1,3 +1,3 @@
-## 勉強メモ
+# 勉強メモ
 
 - [CLAP](memo/CLAP/CLAP.md)
