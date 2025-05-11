@@ -1,0 +1,4 @@
+kramdown:
+  math_engine: mathjax  # tells Kramdown to wrap $$…$$ blocks as <script type="math/tex">
+title: SOUND-NOTE
+description: memo of sound related diffusion models
