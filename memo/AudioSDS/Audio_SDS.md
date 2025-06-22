@@ -3,13 +3,6 @@
 ## 参考
 * [Score Distillation Sampling for Audio: Source Separation, Synthesis, and Beyond](https://arxiv.org/abs/2505.04621)
 
-<!-- ## メモ
-
-* 試行されたプロンプトはどういったものか？
-
-* 品質評価はどのように行われたか
- -->
-
 ## 1. 概要
 
 学習済の音声ドメイン拡散モデルの知識をうまく使うことで、特殊なデータセットを用いることなく、音声レンダリングモデルのパラメータを調整しようというもの。
