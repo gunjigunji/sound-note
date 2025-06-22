@@ -132,7 +132,7 @@ $$
 \end{align*}
 $$
 
-ここで、 $\boldsymbol{J}_{\hat{\boldsymbol{\epsilon}}_\phi}(\boldsymbol{z})$ は拡散モデルのU-Net部分についてのヤコビアン。
+ここで、 $\boldsymbol{J}$ は拡散モデルのU-Net部分についてのヤコビアン。
 しかしながら、このヤコビアン部分のback-propagationは計算コストが高いことや数値的な不安定性を持つことが知られており、計算を単純化するために単位行列で置き換えを行う。なお理論的な正当性もあるらしい([参考](https://arxiv.org/abs/2209.14988)):
 
 $$
@@ -188,7 +188,7 @@ $$
 \end{align*}
 $$
 
-ここで、$\hat{\boldsymbol{x}}_\phi$ はデノイズ処理後にデコードされた音声を表す。$\text{enc}_\phi(\cdot)$, $\text{dec}_\phi(\cdot)$, $\text{denoise}_\phi(\cdot), \text{noise}(\cdot)$ はそれぞれ、エンコーダ関数、デコーダ関数、デノイズ関数、ノイズ関数を表す。
+ここで、${\hat{\boldsymbol{x}}}_{\phi}$ はデノイズ処理後にデコードされた音声を表す。 $\text{enc}_{\phi}(\cdot)$, $\text{dec}_{\phi}(\cdot)$, $\text{denoise}_{\phi}(\cdot), \text{noise}(\cdot)$ はそれぞれ、エンコーダ関数、デコーダ関数、デノイズ関数、ノイズ関数を表す。
 
 これにより、潜在音声拡散モデルのエンコーダーを通じた微分を回避し、代わりにデコーダー空間で音声領域での不一致を計算する。
 
