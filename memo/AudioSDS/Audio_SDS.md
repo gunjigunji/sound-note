@@ -193,9 +193,9 @@ $$
 また、
 $$
 \begin{align*}
-    \text{enc}_{\phi}(\cdot)&: \text{エンコーダ関数}\,,
-    \text{dec}_{\phi}(\cdot)&: \text{デコーダ関数}\,,
-    \text{denoise}_{\phi}(\cdot)&: \text{デノイジング関数}\,,
+    \text{enc}_{\phi}(\cdot)&: \text{エンコーダ関数}\,,\\
+    \text{dec}_{\phi}(\cdot)&: \text{デコーダ関数}\,,\\
+    \text{denoise}_{\phi}(\cdot)&: \text{デノイジング関数}\,,\\
     \text{noise}(\cdot)&: \text{ノイジング関数}\,.
 \end{align*}
 $$
