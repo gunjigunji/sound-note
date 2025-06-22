@@ -191,6 +191,7 @@ $$
 ここで、${\hat{\boldsymbol{x}}}_{\phi}$ はデノイズ処理後にデコードされた音声を表す。
 
 また、
+
 $$
 \begin{align*}
     \text{enc}_{\phi}(\cdot)&: \text{エンコーダ関数}\,,\\
