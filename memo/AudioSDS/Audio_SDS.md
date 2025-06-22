@@ -58,7 +58,7 @@ SDSでは、同じテキストプロンプトでもノイズの違いで毎回�
 
 
 
-## 4. 技術的詳細
+## 2. 技術的詳細
 
 ### 基本的な仕組み
 
@@ -76,34 +76,34 @@ SDSでは、同じテキストプロンプトでもノイズの違いで毎回�
 
 SDSでは、事前訓練された拡散モデルの「知識」を、全く異なるパラメトリック表現に効率的に転移する。
 
-信号のレンダリングモデルを $\bm{g}: \Theta \times \mathcal{C} \to\mathcal{X}$ とする。 $\bm{\theta}\in\Theta$ をモデルパラメータ（学習対象）、$\bm{c}\in \mathcal{C}$ をサンプリングされたレンダリングパラメータ、$\bm{x}\in \mathcal{X}$ をレンダリングされた信号とする。
+信号のレンダリングモデルを $\boldsymbol{g}: \Theta \times \mathcal{C} \to\mathcal{X}$ とする。 $\boldsymbol{\theta}\in\Theta$ をモデルパラメータ（学習対象）、$\boldsymbol{c}\in \mathcal{C}$ をサンプリングされたレンダリングパラメータ、$\boldsymbol{x}\in \mathcal{X}$ をレンダリングされた信号とする。
 
-まず、パラメータ $\bm{\theta}$ およびレンダリングパラメータ $\bm{c}$ から信号をレンダリングする。
+まず、パラメータ $\boldsymbol{\theta}$ およびレンダリングパラメータ $\boldsymbol{c}$ から信号をレンダリングする。
 $$
 \begin{align*}
-    \bm{x}=\bm{g}(\bm{\theta},\bm{c})\,.
+    \boldsymbol{x}=\boldsymbol{g}(\boldsymbol{\theta},\boldsymbol{c})\,.
 \end{align*}
 $$ 
 この信号に対してノイズを付加する。
 $$
 \begin{align*}
-    \bm{z} &= \alpha_{t^\prime} \bm{g}(\bm{\theta},\bm{c}) + \sigma_{t^\prime}\bm{\epsilon}\,,\\
-    \bm{\epsilon}&\sim \mathcal{N}(\bm{0},\bm{1})\,.
+    \boldsymbol{z} &= \alpha_{t^\prime} \boldsymbol{g}(\boldsymbol{\theta},\boldsymbol{c}) + \sigma_{t^\prime}\boldsymbol{\epsilon}\,,\\
+    \boldsymbol{\epsilon}&\sim \mathcal{N}(\boldsymbol{0},\boldsymbol{1})\,.
 \end{align*}
 $$
 ここで、 $\alpha_{t^\prime}$ と $\sigma_{t^\prime}$ はそれぞれシグナルとノイズのスケールで、ノイズスケジュールとして与えられる。 $t^\prime$ はタイムステップで $t\in[t^\prime_{\rm min}, t^\prime_{\rm max}]\approx[0,1]$ の値をとる。この値が小さいほどノイズスケールも小さい。
 
-$\bm{z}$ はランダムサンプリングした $t^\prime$、$\bm{\epsilon}$ について得られる。
+$\boldsymbol{z}$ はランダムサンプリングした $t^\prime$、$\boldsymbol{\epsilon}$ について得られる。
 
-ノイズ予測モデルは $\bm{\epsilon}_\phi(\bm{z}, t^\prime, \bm{p})$ である。
-ここで、 $\phi$ は（学習済）拡散モデルパラメータでここでは固定値をとる。 $\bm{p}$ は拡散モデルへの入力プロンプトを表す。
+ノイズ予測モデルは $\boldsymbol{\epsilon}_\phi(\boldsymbol{z}, t^\prime, \boldsymbol{p})$ である。
+ここで、 $\phi$ は（学習済）拡散モデルパラメータでここでは固定値をとる。 $\boldsymbol{p}$ は拡散モデルへの入力プロンプトを表す。
 
 実際は、より高品質の生成のために、分類器フリーガイダンス (CFG) が用いられる。
 $$
 \begin{align*}
-    \hat{\bm{\epsilon}}(\bm{z}, t^\prime, \bm{p}) 
-    = (1+\tau)\bm{\epsilon}_\phi(\bm{z}, t^\prime, \bm{p})
-    -\tau\bm{\epsilon}_\phi(\bm{z},t^\prime)\,.
+    \hat{\boldsymbol{\epsilon}}(\boldsymbol{z}, t^\prime, \boldsymbol{p}) 
+    = (1+\tau)\boldsymbol{\epsilon}_\phi(\boldsymbol{z}, t^\prime, \boldsymbol{p})
+    -\tau\boldsymbol{\epsilon}_\phi(\boldsymbol{z},t^\prime)\,.
 \end{align*}
 $$
 $\tau$ はガイダンスパラメータ。CFGで「プロンプトあり」と「プロンプトなし」の予測の差を拡大することで、テキスト条件の影響を強化している。
@@ -111,10 +111,10 @@ $\tau$ はガイダンスパラメータ。CFGで「プロンプトあり」と�
 レンダリングモデルのパラメータ更新のための損失関数は以下で与えられる: 
 $$
 \begin{align*}
-    \mathcal{L}_{\text{SDS}}(\bm{\theta}; \bm{p}) 
+    \mathcal{L}_{\text{SDS}}(\boldsymbol{\theta}; \boldsymbol{p}) 
     = 
-    \mathbb{E}_{t', \bm{\epsilon}, \bm{c}}
-    \left[\omega(t') \|\hat{\bm{\epsilon}}_\phi(\bm{z}(\bm{\theta},\bm{c}), t', \bm{p}) - \bm{\epsilon}\|^2\right]\,.
+    \mathbb{E}_{t', \boldsymbol{\epsilon}, \boldsymbol{c}}
+    \left[\omega(t') \|\hat{\boldsymbol{\epsilon}}_\phi(\boldsymbol{z}(\boldsymbol{\theta},\boldsymbol{c}), t', \boldsymbol{p}) - \boldsymbol{\epsilon}\|^2\right]\,.
 \end{align*}
 $$
 
@@ -124,15 +124,15 @@ $\omega(t^\prime)$ は時間依存の重みパラメータ。
 
 $$
 \begin{align*}
-    \nabla_{\bm{\theta}} \mathcal{L}_{\text{SDS}}(\bm{\theta}; \bm{p}) = \mathbb{E}_{t', \bm{\epsilon}, \bm{c}}[\omega(t')(\hat{\bm{\epsilon}}_\phi(\bm{z}(\bm{\theta},\bm{c}), t', \bm{p}) - \bm{\epsilon}) \bm{J}_{\hat{\bm{\epsilon}}_\phi}(\bm{z}) \nabla_{\bm{\theta}} \bm{z}(\bm{\theta}, \bm{c})]\,.
+    \nabla_{\boldsymbol{\theta}} \mathcal{L}_{\text{SDS}}(\boldsymbol{\theta}; \boldsymbol{p}) = \mathbb{E}_{t', \boldsymbol{\epsilon}, \boldsymbol{c}}[\omega(t')(\hat{\boldsymbol{\epsilon}}_\phi(\boldsymbol{z}(\boldsymbol{\theta},\boldsymbol{c}), t', \boldsymbol{p}) - \boldsymbol{\epsilon}) \boldsymbol{J}_{\hat{\boldsymbol{\epsilon}}_\phi}(\boldsymbol{z}) \nabla_{\boldsymbol{\theta}} \boldsymbol{z}(\boldsymbol{\theta}, \boldsymbol{c})]\,.
 \end{align*}
 $$
 
-$\bm{J}_{\hat{\bm{\epsilon}}_\phi}(\bm{z})$ は拡散モデルのU-Net部分についてのヤコビアン。
+$\boldsymbol{J}_{\hat{\boldsymbol{\epsilon}}_\phi}(\boldsymbol{z})$ は拡散モデルのU-Net部分についてのヤコビアン。
 しかしながら、このヤコビアン部分のback-propagationは計算コストが高いことや数値的な不安定性を持つことが知られており、計算を単純化するために単位行列で置き換えを行う。なお理論的な正当性もあるらしい([参考](https://arxiv.org/abs/2209.14988)):
 $$
 \begin{align*}
-    u_{\text{SDS}}(\bm{\theta}; \bm{p}) = \mathbb{E}_{t', \bm{\epsilon}, \bm{c}}[\omega(t')(\hat{\bm{\epsilon}}_\phi(\bm{z}(\bm{\theta},\bm{c}), t', \bm{p}) - \bm{\epsilon}) \nabla_{\bm{\theta}} \bm{z}(\bm{\theta}, \bm{c})]
+    u_{\text{SDS}}(\boldsymbol{\theta}; \boldsymbol{p}) = \mathbb{E}_{t', \boldsymbol{\epsilon}, \boldsymbol{c}}[\omega(t')(\hat{\boldsymbol{\epsilon}}_\phi(\boldsymbol{z}(\boldsymbol{\theta},\boldsymbol{c}), t', \boldsymbol{p}) - \boldsymbol{\epsilon}) \nabla_{\boldsymbol{\theta}} \boldsymbol{z}(\boldsymbol{\theta}, \boldsymbol{c})]
 \end{align*}
 $$
 
@@ -148,18 +148,18 @@ Audio-SDSでもSDSと同様のアプリーチがなされるが、いくつか�
 まず、音声はステレオ（2チャンネル）あることから、オーディオレンダリング関数は
 $$
     \begin{align*}
-        \bm{g}_{\text{audio}}: \Theta\to\mathbb{R}^{2\times T}
+        \boldsymbol{g}_{\text{audio}}: \Theta\to\mathbb{R}^{2\times T}
     \end{align*}\,,
 $$
 と表され、
 出力オーディオ信号は
 $$
-    \bm{x}_{\text{audio}}
+    \boldsymbol{x}_{\text{audio}}
     =
-    \bm{g}_{\text{audio}}(\theta)\,,
+    \boldsymbol{g}_{\text{audio}}(\theta)\,,
 $$
 となる。ここで、$T$ はオーディオサンプルの総数を表す。
-また、SDSにあったパラメータ $\bm{c}$ は今回のタスクでは必要ないため使用されない。
+また、SDSにあったパラメータ $\boldsymbol{c}$ は今回のタスクでは必要ないため使用されない。
 
 ##### エンコーダ不安定性
 
@@ -169,15 +169,15 @@ $$
 その更新則は次の $u^{\text{dec}}_{\text{SDS}}$ で与えられる: 
 $$
 \begin{align*}
-    u^{\text{dec}}_{\text{SDS}}(\bm{\theta}; \bm{p})
+    u^{\text{dec}}_{\text{SDS}}(\boldsymbol{\theta}; \boldsymbol{p})
     &=
-    \mathbb{E}_{t', \bm{\epsilon}}[\hat{\bm{x}}_\phi(\bm{\theta}, t', \bm{\epsilon}, \bm{p})] - \bm{x}(\bm{\theta}) \nabla_{\bm{\theta}} \bm{x}(\bm{\theta})\,,\\
-    \hat{\bm{x}}_\phi(\bm{\theta}, t', \bm{\epsilon}, \bm{p})
+    \mathbb{E}_{t', \boldsymbol{\epsilon}}[\hat{\boldsymbol{x}}_\phi(\boldsymbol{\theta}, t', \boldsymbol{\epsilon}, \boldsymbol{p})] - \boldsymbol{x}(\boldsymbol{\theta}) \nabla_{\boldsymbol{\theta}} \boldsymbol{x}(\boldsymbol{\theta})\,,\\
+    \hat{\boldsymbol{x}}_\phi(\boldsymbol{\theta}, t', \boldsymbol{\epsilon}, \boldsymbol{p})
     & =
-    \text{dec}_\phi(\text{denoise}_\phi(\text{noise}(\text{enc}_\phi(\bm{x}(\bm{\theta})), t', \bm{\epsilon}), \bm{p}))\,.
+    \text{dec}_\phi(\text{denoise}_\phi(\text{noise}(\text{enc}_\phi(\boldsymbol{x}(\boldsymbol{\theta})), t', \boldsymbol{\epsilon}), \boldsymbol{p}))\,.
 \end{align*}
 $$
-ここで、$\hat{\bm{x}}_\phi$ はデノイズ処理後にデコードされた音声を表す。$\text{enc}_\phi(\cdot)$, $\text{dec}_\phi(\cdot)$, $\text{denoise}_\phi(\cdot), \text{noise}(\cdot)$ はそれぞれ、エンコーダ関数、デコーダ関数、デノイズ関数、ノイズ関数を表す。
+ここで、$\hat{\boldsymbol{x}}_\phi$ はデノイズ処理後にデコードされた音声を表す。$\text{enc}_\phi(\cdot)$, $\text{dec}_\phi(\cdot)$, $\text{denoise}_\phi(\cdot), \text{noise}(\cdot)$ はそれぞれ、エンコーダ関数、デコーダ関数、デノイズ関数、ノイズ関数を表す。
 
 これにより、潜在音声拡散モデルのエンコーダーを通じた微分を回避し、代わりにデコーダー空間で音声領域での不一致を計算する。
 
@@ -188,22 +188,22 @@ $$
 そこでAudio-SDSでは、短時間フーリエ変換（STFT）の振幅スペクトログラム $\mathcal{S}_m(\cdot)$ を、異なる窓幅 ($m=1,\dots,M$) で複数計算し、それらを合算したマルチスケールスペクトログラムを用いて誤差を測っている。
 
 具体的には、各イテレーションでノイズを加え部分的に復元したデコード波形 $\hat{x}$ について、各スケールのスペクトログラム $S_m(\hat{x})$ とレンダリング波形 $\mathcal{S}_m(x)$ の差分を計算し、
-その合計をパラメータ $\bm{\theta}$ に対する勾配 $\nabla_\theta \mathcal{S}_m(x)$ と掛け合わせて更新方向を得る。
+その合計をパラメータ $\boldsymbol{\theta}$ に対する勾配 $\nabla_\theta \mathcal{S}_m(x)$ と掛け合わせて更新方向を得る。
 この多重スケールの比較により、短い窓では時間分解能を活かして鋭いトランジェントを捉え、高い窓では周波数分解能を活かして細かなスペクトル構造を同時に捉えられるため、
 結果として人間が聴いて「自然」で「立体感のある」音響が得られるようになる。
 
 $$
 \begin{align*}
-    \bm{u}^{\text{dec}}_{\text{SDS}}(\bm{\theta}; \bm{p})
+    \boldsymbol{u}^{\text{dec}}_{\text{SDS}}(\boldsymbol{\theta}; \boldsymbol{p})
     = \sum_{m=1}^{M}
     \Bigl(
-        \mathbb{E}_{t^\prime,\bm{\epsilon}}
+        \mathbb{E}_{t^\prime,\boldsymbol{\epsilon}}
         \bigl[
-            \mathcal{S}_{m}\bigl(\hat{x}_{\phi}(\theta,t^\prime,\bm{\epsilon},\bm{p})\bigr)
+            \mathcal{S}_{m}\bigl(\hat{x}_{\phi}(\theta,t^\prime,\boldsymbol{\epsilon},\boldsymbol{p})\bigr)
         \bigr]
-    - \mathcal{S}_{m}\bigl(\bm{x}(\bm{\theta})\bigr)
+    - \mathcal{S}_{m}\bigl(\boldsymbol{x}(\boldsymbol{\theta})\bigr)
     \Bigr)\,
-    \nabla_{\theta}\mathcal{S}_{m}\bigl(\bm{x}(\bm{\theta})\bigr)\,.
+    \nabla_{\theta}\mathcal{S}_{m}\bigl(\boldsymbol{x}(\boldsymbol{\theta})\bigr)\,.
 \end{align*}
 $$
 
@@ -219,15 +219,15 @@ $$
 こうすることで、従来の単一ステップに比べて拡散モデルの学習した分布により忠実に沿った更新が可能になり、トランジェントや高周波ディテールがより自然に保持されるとともに、最適化の途中で現れる不安定なノイズ発生が大幅に抑えられる。
 
 
-### 今回のタスク
+## 3. 今回のタスク
 
 
 
 「FM合成」「インパクト合成」「音源分離」の3タスクに対してAudioSDSを利用。
 
-#### 対象の音声系タスクの詳細
+### 対象の音声系タスクの詳細
 
-##### FM合成 (FM Synthesis)
+#### FM合成 (FM Synthesis)
 
 モデルの構造:
 基本的な古典的FMシンセサイザーを使用。
@@ -240,7 +240,7 @@ $$
 * 各オシレーターの基本周波数 ω
 * 各オシレーターのアタック α とディケイ δ
 
-##### インパクト合成 (Impact Synthesis)
+#### インパクト合成 (Impact Synthesis)
 
 モデルの構造:
 物理法則に基づいたモーダル合成モデルを使用。
@@ -252,7 +252,7 @@ $$
 * 各サイン波の周波数 λn、減衰率 dn、振幅 an
 * リバーブを構成する各要素の周波数、減衰率、振幅
 
-##### 音源分離 (Source Separation)
+#### 音源分離 (Source Separation)
 
 モデルの構造:
 既存の音声ミックスから個々の音を分離する各音源の表現方法そのものをモデルとみなす
@@ -264,7 +264,7 @@ $$
 
 
 
-#### 利用した学習済み拡散モデル
+### 利用した学習済み拡散モデル
 「一般のオーディオに対して十分な品質を持つ唯一のオープンソースのテキストからオーディオへの拡散モデル」であることから、Stable Audio Open (https://arxiv.org/abs/2407.14358) を利用。 
 
 Stable Audio Openの特徴:
@@ -274,21 +274,21 @@ Stable Audio Openの特徴:
 * アクセシビリティ: 一般的なコンシューマー向けのGPU（例えばNVIDIA RTX 3090など）でも動作するように設計。専門的な高価な機材がなくても利用できる。
 
 
-#### 実験結果と評価
+### 実験結果と評価
 
-##### FMシンセサイザー
+#### FMシンセサイザー
 * プロンプトとの一致度: 85%以上のユーザー評価
 * 音質評価: 従来の教師あり学習と同等以上の品質
-##### インパクト音響
+#### インパクト音響
 * 物理的制約との整合性: 90%以上の精度
 * リアリティ評価: 専門家による高評価
-##### 音源分離
+#### 音源分離
 * 分離精度: SDR (Signal-to-Distortion Ratio) で従来手法と同等
 * プロンプトの忠実度: 80%以上の一致率
 
 
 
-## 3. 将来展望
+## 4. 将来展望
 
 ### 改善可能性
 
