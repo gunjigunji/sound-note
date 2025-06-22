@@ -79,18 +79,22 @@ SDSでは、事前訓練された拡散モデルの「知識」を、全く異�
 信号のレンダリングモデルを $\boldsymbol{g}: \Theta \times \mathcal{C} \to\mathcal{X}$ とする。 $\boldsymbol{\theta}\in\Theta$ をモデルパラメータ（学習対象）、$\boldsymbol{c}\in \mathcal{C}$ をサンプリングされたレンダリングパラメータ、$\boldsymbol{x}\in \mathcal{X}$ をレンダリングされた信号とする。
 
 まず、パラメータ $\boldsymbol{\theta}$ およびレンダリングパラメータ $\boldsymbol{c}$ から信号をレンダリングする。
+
 $$
 \begin{align*}
     \boldsymbol{x}=\boldsymbol{g}(\boldsymbol{\theta},\boldsymbol{c})\,.
 \end{align*}
 $$ 
+
 この信号に対してノイズを付加する。
+
 $$
 \begin{align*}
     \boldsymbol{z} &= \alpha_{t^\prime} \boldsymbol{g}(\boldsymbol{\theta},\boldsymbol{c}) + \sigma_{t^\prime}\boldsymbol{\epsilon}\,,\\
     \boldsymbol{\epsilon}&\sim \mathcal{N}(\boldsymbol{0},\boldsymbol{1})\,.
 \end{align*}
 $$
+
 ここで、 $\alpha_{t^\prime}$ と $\sigma_{t^\prime}$ はそれぞれシグナルとノイズのスケールで、ノイズスケジュールとして与えられる。 $t^\prime$ はタイムステップで $t\in[t^\prime_{\rm min}, t^\prime_{\rm max}]\approx[0,1]$ の値をとる。この値が小さいほどノイズスケールも小さい。
 
 $\boldsymbol{z}$ はランダムサンプリングした $t^\prime$、$\boldsymbol{\epsilon}$ について得られる。
@@ -120,7 +124,7 @@ $$
 
 $\omega(t^\prime)$ は時間依存の重みパラメータ。
 
-この損失の勾配は、チェーンルールを用いて次のように表せる: 
+この損失の勾配は、チェーンルールを用いて次のように表せる:
 
 $$
 \begin{align*}
@@ -128,8 +132,9 @@ $$
 \end{align*}
 $$
 
-$\boldsymbol{J}_{\hat{\boldsymbol{\epsilon}}_\phi}(\boldsymbol{z})$ は拡散モデルのU-Net部分についてのヤコビアン。
+ここで、 $\boldsymbol{J}_{\hat{\boldsymbol{\epsilon}}_\phi}(\boldsymbol{z})$ は拡散モデルのU-Net部分についてのヤコビアン。
 しかしながら、このヤコビアン部分のback-propagationは計算コストが高いことや数値的な不安定性を持つことが知られており、計算を単純化するために単位行列で置き換えを行う。なお理論的な正当性もあるらしい([参考](https://arxiv.org/abs/2209.14988)):
+
 $$
 \begin{align*}
     u_{\text{SDS}}(\boldsymbol{\theta}; \boldsymbol{p}) = \mathbb{E}_{t', \boldsymbol{\epsilon}, \boldsymbol{c}}[\omega(t')(\hat{\boldsymbol{\epsilon}}_\phi(\boldsymbol{z}(\boldsymbol{\theta},\boldsymbol{c}), t', \boldsymbol{p}) - \boldsymbol{\epsilon}) \nabla_{\boldsymbol{\theta}} \boldsymbol{z}(\boldsymbol{\theta}, \boldsymbol{c})]
@@ -146,18 +151,22 @@ Audio-SDSでもSDSと同様のアプリーチがなされるが、いくつか�
 ##### パラメータ
 
 まず、音声はステレオ（2チャンネル）あることから、オーディオレンダリング関数は
+
 $$
     \begin{align*}
         \boldsymbol{g}_{\text{audio}}: \Theta\to\mathbb{R}^{2\times T}
     \end{align*}\,,
 $$
+
 と表され、
 出力オーディオ信号は
+
 $$
     \boldsymbol{x}_{\text{audio}}
     =
     \boldsymbol{g}_{\text{audio}}(\theta)\,,
 $$
+
 となる。ここで、$T$ はオーディオサンプルの総数を表す。
 また、SDSにあったパラメータ $\boldsymbol{c}$ は今回のタスクでは必要ないため使用されない。
 
@@ -166,7 +175,8 @@ $$
 また、音声拡散モデル特有の問題として、エンコーダーの微分が不安定であることがある。
 そのため、Audio-SDSではSDSに一部改良を加えたDecorder-SDSを提案、使用している。
 
-その更新則は次の $u^{\text{dec}}_{\text{SDS}}$ で与えられる: 
+その更新則は次の $u^{\text{dec}}_{\text{SDS}}$ で与えられる:
+
 $$
 \begin{align*}
     u^{\text{dec}}_{\text{SDS}}(\boldsymbol{\theta}; \boldsymbol{p})
@@ -177,6 +187,7 @@ $$
     \text{dec}_\phi(\text{denoise}_\phi(\text{noise}(\text{enc}_\phi(\boldsymbol{x}(\boldsymbol{\theta})), t', \boldsymbol{\epsilon}), \boldsymbol{p}))\,.
 \end{align*}
 $$
+
 ここで、$\hat{\boldsymbol{x}}_\phi$ はデノイズ処理後にデコードされた音声を表す。$\text{enc}_\phi(\cdot)$, $\text{dec}_\phi(\cdot)$, $\text{denoise}_\phi(\cdot), \text{noise}(\cdot)$ はそれぞれ、エンコーダ関数、デコーダ関数、デノイズ関数、ノイズ関数を表す。
 
 これにより、潜在音声拡散モデルのエンコーダーを通じた微分を回避し、代わりにデコーダー空間で音声領域での不一致を計算する。
@@ -189,6 +200,7 @@ $$
 
 具体的には、各イテレーションでノイズを加え部分的に復元したデコード波形 $\hat{x}$ について、各スケールのスペクトログラム $S_m(\hat{x})$ とレンダリング波形 $\mathcal{S}_m(x)$ の差分を計算し、
 その合計をパラメータ $\boldsymbol{\theta}$ に対する勾配 $\nabla_\theta \mathcal{S}_m(x)$ と掛け合わせて更新方向を得る。
+
 この多重スケールの比較により、短い窓では時間分解能を活かして鋭いトランジェントを捉え、高い窓では周波数分解能を活かして細かなスペクトル構造を同時に捉えられるため、
 結果として人間が聴いて「自然」で「立体感のある」音響が得られるようになる。
 
@@ -234,11 +246,11 @@ $$
 * 複数のサイン波オシレーター（発振器）で構成。
 * 各オシレーターには、音の時間的な変化（立ち上がりや減衰）を制御するためのエンベロープ（Attack/Decay）が存在。
 
-最適化されるパラメータ (θ):
-* FMマトリクス A
+最適化されるパラメータ ( $\boldsymbol{\theta}$ ):
+* FMマトリクス $A$
   * 各オシレーターが他のオシレーターの周波数を変調させる際の変調の強さを特徴づける
-* 各オシレーターの基本周波数 ω
-* 各オシレーターのアタック α とディケイ δ
+* 各オシレーターの基本周波数 $\omega$
+* 各オシレーターのアタック $\alpha$ とディケイ $\delta$
 
 #### インパクト合成 (Impact Synthesis)
 
@@ -248,8 +260,8 @@ $$
 * リバーブインパルス (Ireverb): 音が響く空間の残響を表し、バンドパスフィルターを通したホワイトノイズの合計としてモデル化
 * 最終的な音声は、これらのインパルス応答の畳み込み（convolution）で生成。
 
-最適化されるパラメータ (θ):
-* 各サイン波の周波数 λn、減衰率 dn、振幅 an
+最適化されるパラメータ ( $\boldsymbol{\theta}$ ):
+* 各サイン波の周波数 $\lambda_n$、減衰率 $d_n$、振幅 $a_n$
 * リバーブを構成する各要素の周波数、減衰率、振幅
 
 #### 音源分離 (Source Separation)
@@ -259,8 +271,8 @@ $$
 * 分離したい各音源（例：「サックスの音」、「交通騒音」）は、Stable Audio Openモデルのオートエンコーダによって得られる潜在表現（latent representation）h として扱う。 
 * 最適化の対象はシンセサイザーのパラメータではなく、各音源に対応する潜在変数ベクトルそのもの。
 
-最適化されるパラメータ (θ):
-* 分離したい各音源 k の潜在表現 hk の集まり {h1, h2, ...}。
+最適化されるパラメータ ( $\theta$ ):
+* 分離したい各音源 $k$ の潜在表現 $h_k$ の集まり $\{ h_1, h_2, \dots\} $
 
 
 
